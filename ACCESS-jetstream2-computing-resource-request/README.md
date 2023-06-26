@@ -1,7 +1,7 @@
 # Application submission info
 
 ---
-> Submitted on 11-Jun-2023 (BIO230091)
+> Submitted on 11-Jun-2023 (BIO230091); approved 12-Jun-2023
 ---
 
 Submitted through ACCESS: https://access-ci.org/
@@ -39,4 +39,21 @@ Then selecting to submit an Explore ACCESS request
 
 ---
 
+## After submission
+
+### Transfering credits from ACCESS to JetStream2
 Once approved, and logged in, needed this page (https://allocations.access-ci.org/requests) in order to transfer ACCESS credits to specific resource as detailed on this page (https://allocations.access-ci.org/use-credits-overview). For the appropriate allocation request, selected "Choose New Action", then "Exchange". On next screen, chose Indiana Jetstream2 as Resource, clicked "Add Resource", entered all credits, needed to add a comment, and then submitted.
+
+### Requesting increase in quotas
+The starting quotas will not enable enough instances concurrently. Can build an email to submit a request when logged into jetstream2 here: https://jetstream2.exosphere.app/exosphere/getsupport
+
+This is the text I submitted:
+
+> Hi there :)
+> 
+> We plan to use this allocation (BIO230091) with 60 concurrent m3.large instances for a bioinformatics course we are running. The starting limit is set to 10. 
+> 
+> Could you please help with increasing the alloted quotas so that we will be able to run up to 60 m3.large instances concurrently on this allocation, including cores, ram, volume, ports, available IP addresses, and whatever other magic you folks take care of that i'm naive to?
+> 
+> Thank you for any help!
+> -Mike
