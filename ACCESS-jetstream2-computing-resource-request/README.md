@@ -41,7 +41,7 @@ Then selecting to submit an Explore ACCESS request
 
 ## After submission
 
-### Transfering credits from ACCESS to JetStream2
+### Transferring credits from ACCESS to JetStream2
 Once approved, and logged in, needed this page (https://allocations.access-ci.org/requests) in order to transfer ACCESS credits to specific resource as detailed on this page (https://allocations.access-ci.org/use-credits-overview). For the appropriate allocation request, selected "Choose New Action", then "Exchange". On next screen, chose Indiana Jetstream2 as Resource, clicked "Add Resource", entered all credits, needed to add a comment, and then submitted.
 
 ### Requesting increase in quotas
