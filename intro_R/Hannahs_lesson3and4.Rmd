@@ -8,7 +8,9 @@ output: html_document
 # STAMPS 2023
 ## Lesson 3 - dplyr and Tidyverse
 
-Tidyverse is a suite of powerful and cohesive R packages, including dplyr, ggplot2, and tidyr. These tools share similar syntax, and some people find them to be more intuitive. I find them to be more similar to functions excell.
+Tidyverse is a suite of powerful and cohesive R packages, including dplyr, ggplot2, and tidyr. These tools share similar syntax, and some people find them to be more intuitive. 
+
+There are other benefits to using tidyverse, very nicely described in this [Carpentries lesson](https://datacarpentry.org/R-ecology-lesson/03-dplyr.html#what-are-dplyr-and-tidyr)
 
 dplyr is an R package in the Tidyverse suite. Dplyr has commands that help address common data manipulation challenges:
 
@@ -60,7 +62,7 @@ abundances <- read_tsv("data/FWS_OTUs.txt")
 ```
 
 
-Exercise: Please take a minute to explore the differences between the tables loaded with read.csv and read_tsv. Write down what you notice
+#### Exercise: Please take a minute to explore the differences between the tables loaded with read.csv and read_tsv. Write down what you notice
 - 
 
 
@@ -99,7 +101,96 @@ abundances %>%
 ```
 
 ```{r}
-covariates %>% 
-  select(!starts_with("MBL"))
+abundances %>% 
+  select(!starts_with("MBL") & !contains("Jun"))
 ```
 
+`filter()` is used to filter rows by their contents. 
+
+remember this table
+```{r}
+covariates
+```
+
+```{r}
+covariates %>% 
+  filter(Location=="MBL")
+```
+you can combine filters too:
+```{r}
+covariates %>% 
+  filter(Location=="MBL" & Season == "Winter") 
+```
+
+
+```{r}
+names(abundances)
+abundances %>% 
+  filter(
+    JPA_Jan == 0 &
+    JPA_Feb == 0 &  
+    JPA_May == 0 &  
+    JPA_Jun == 0 & 
+    LOP_Jan == 0 &  
+    LOP_Feb == 0 &  
+    LOP_Jun == 0 &  
+    LOP_Jul == 0 &  
+    MBL_Jan == 0 & 
+    MBL_Feb == 0 &
+    MBL_Jun == 0 &
+    MBL_Aug == 0
+    )
+```
+there are other ways to do this ;)
+
+#### Exercise:
+
+- Combine Select and Filter, generate a table from covariates that contains SampleName and Location, but only in the Summer season. 
+
+- does it matter if you use select or filter first?
+
+
+
+
+##  rename & relocate
+
+
+notice that the first column has a weird name, probably because in the tsv there wasnt a column name, or these were "rownames" (rownames are not really used in tidyverse)
+```{r}
+names(abundances)
+```
+
+
+we can rename our "..1" column like this 
+(note, the back ticks are required because the column name starts with a not-letter.)
+```{r}
+abundances <- abundances %>% 
+  rename(taxonomy = `...1`)
+abundances
+```
+
+we can move around column with `relocate()`. this is helpful if there is a particular few columns you are focusing on when exploring your data. 
+
+if you want to move a column from the first position to the last one, try this
+```{r}
+abundances %>% 
+  relocate(!taxonomy)
+```
+
+
+## mutate & arrange
+mutate() creates a modified data frame with the newly added or modified columns based on your specifications.
+
+
+```{r}
+abundances %>%
+  mutate(log_JPA_Jan = log(JPA_Jan)) %>% 
+  relocate(JPA_Jan, log_JPA_Jan)
+```
+
+
+##
+
+## group_by
+
+## mutate redux
