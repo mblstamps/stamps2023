@@ -189,8 +189,41 @@ abundances %>%
 ```
 
 
-##
+## pivots
+to make this data set a little more malleable, we are going to pivot it
+
+you can pivot data wide or long. Wide data has more columns, and there is some type of data stored in the column names. Long data has fewer columns, and the data that used to be part of the column names is now stored in a category column, with the values along side it. 
+
+
+```{r}
+ abundances_long <- abundances %>% 
+  pivot_longer(
+    !taxonomy, #pivot all the rows except taxonomy
+    names_to = "sample", values_to = "count"
+  ) %>% 
+  relocate(!taxonomy)
+abundances_long
+```
+
 
 ## group_by
+```{r}
+abundances_long
+```
 
-## mutate redux
+
+## group by and summarize
+
+
+run this code to get 
+```{r}
+abundances_long <-abundances_long %>%
+  mutate(phylum = str_split(taxonomy, ";")[[1]][3]) %>% 
+  mutate(class  = str_split(taxonomy, ";")[[1]][4]) %>% 
+  mutate(order  = str_split(taxonomy, ";")[[1]][5]) %>% 
+  mutate(family   = str_split(taxonomy, ";")[[1]][6])
+ 
+unique(abundances_long$fine) 
+```
+
+
