@@ -52,7 +52,54 @@ abundances_baseR <- read.csv("data/FWS_OTUs.txt", sep = "\t", row.names = 1, hea
 ```
 
 When planning to manipulate data with dplyr or other Tidyverse tools, `read_csv()` or `read_tsv()` are preferable. 
-`read_csv()` is a readr command (part of the tidyverse)
+`read_tsv()` is a readr command (part of the tidyverse)
+
+```{r}
+covariates <- read_tsv("data/FWS_covariates.txt")
+abundances <- read_tsv("data/FWS_OTUs.txt")
+```
 
 
+Exercise: Please take a minute to explore the differences between the tables loaded with read.csv and read_tsv. Write down what you notice
+- 
+
+
+## select & filter
+
+remind yourself what the table looks like:
+
+
+```{r}
+covariates
+```
+
+
+the dplyr command `select()` lets you select specific columns. 
+```{r}
+select(abundances, JPA_May, JPA_Jun)
+```
+
+
+piping lets you state the first argument (the name of the table) before the command, and "pipe in" the data like this:
+```{r}
+abundances %>% 
+  select(JPA_May, JPA_Jun)
+```
+
+you can select with contains() or starts_with(), 
+
+```{r}
+abundances %>% 
+  select(contains("Jan"))
+```
+you can also combine multiple select criteria
+```{r}
+abundances %>% 
+  select(starts_with("LOP"))
+```
+
+```{r}
+covariates %>% 
+  select(!starts_with("MBL"))
+```
 
