@@ -1,0 +1,173 @@
+---
+title: "04: Plot your results!"
+author: "Bryshal Moore & Hannah Houts"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+
+If you were stuck on section 3 (dplyr) data
+```{r}
+library(tidyverse)
+
+covariates <- read_tsv("data/FWS_covariates.txt")
+abundances <- read_tsv("data/FWS_OTUs.txt")
+
+abundances <- abundances %>% 
+  rename(taxonomy = `...1`)
+
+abundances_long <- abundances %>% 
+  pivot_longer(
+    !taxonomy, #pivot all the rows except taxonomy
+    names_to = "sample", values_to = "count"
+    ) %>% 
+  relocate(!taxonomy)
+
+abundances_long <- abundances_long %>%
+  mutate(phylum = str_extract(taxonomy, "(?<=;)[^;]+(?=;)")) 
+
+#abundances_long
+```
+
+
+# Install Packages
+```{r}
+#install.packages("vegan")
+#install.packages("tidyverse")
+
+#library(vegan)
+#library(tidyverse)
+```
+
+```{r}
+abundances
+
+```
+
+
+
+
+```{r}
+abund_matrix <- as.matrix(abundances %>% select(!taxonomy))
+#abund_matrix <- t(abund_matrix)
+distances <- vegdist(abund_matrix, method = "euclidean")
+pcoa_plotting_data <- cmdscale(distances, eig= TRUE, k=2)
+pcoa_point_data <- as.data.frame(pcoa_plotting_data$points)
+pcoa_point_data$taxonomy <- NA
+pcoa_point_data$taxonomy <- abundances$taxonomy
+
+pcoa_w_metadata <- inner_join(pcoa_point_data, abundances, by = "taxonomy")
+pcoa_w_metadata
+
+#Plot the results with ggplot2
+ggplot(pcoa_w_metadata, aes(x=V1, y=V2, label = taxonomy, color = )) + geom_point(size = 3, alpha = .5) +
+  # geom_text_repel() +
+  xlab("PCoA 1") +
+  ylab("PCoA 2") +
+  theme_classic()
+#pcoa_graph
+```
+
+#Define dataframes
+```{r}
+
+
+
+# Save abundances as a dataframe
+abund_matrix <- as.matrix(abundances) ### %>% select(!taxonomy, !sample))
+
+
+# To check if the characters are numerical
+#is_numerical <- function(x) {
+#  grepl("^\\d+$", x)
+#}
+
+# Apply the above function to each element of the matrix
+#is_numerical_matrix <- apply(abund_matrix, 2, is_numerical)
+
+
+
+# Convert all elements (except the first row and the first column) to numeric
+#abund_matrix[,-1] <- as.numeric(abund_matrix[,-1])
+
+# To check if the characters are numerical
+#is_numerical <- function(x) {
+#  grepl("^\\d+$", x)
+#}
+
+# Apply the above function to each element of the matrix
+#is_numerical_matrix <- apply(df_matrix, 2, is_numerical)
+
+# Print the results of whether the elements are numerical
+#print(is_numerical_matrix)
+
+
+
+#df_matrix_clean <- as.matrix(df_matrix %>% select(!taxonomy))
+#df_matrix_clean <- df_matrix[, !colnames(df_matrix) %in% "taxonomy"]
+#df_matrix_clean
+
+# To check if the characters are numerical
+#is_numerical <- function(x) {
+#  grepl("^\\d+$", x)
+#}
+
+# Apply the above function to each element of the matrix
+#is_numerical_matrix <- apply(df_matrix_clean, 2, is_numerical)
+
+
+
+
+# Convert to a dataframe
+df_dataframe <- as.data.frame(df_matrix_clean)
+
+print(df_dataframe)
+
+# To check if the characters are numerical
+is_numerical <- function(x) {
+  grepl("^\\d+$", x)
+}
+
+# Apply the above function to each element of the matrix
+is_numerical_frame <- apply(df_dataframe, 2, is_numerical)
+
+# Print the results of whether the elements are numerical
+print(is_numerical_frame)
+
+# Check for non-numeric elements in each column
+non_numeric_columns <- sapply(df_dataframe, function(x) !is.numeric(x))
+
+# Convert non-numeric elements to NA (assuming you want to exclude them)
+df_dataframe[non_numeric_columns] <- lapply(df_dataframe[non_numeric_columns], as.numeric)
+```
+
+
+```{r}
+# Calculate distances using vegdist
+diss <- vegdist(df_dataframe, method = "euclidean")
+
+
+
+pcoa <- cmdscale(diss, eig= TRUE, k=2)
+pcoa
+
+# Prepare the data for plotting
+df <- as.data.frame(pcoa$points)
+#df$Samples <- NA
+#df$Samples <- abundances_new$taxonomy
+
+#Plot the results with ggplot2
+pcoa_graph <- ggplot(df, aes(x=V1, y=V2, label = "sample")) + geom_point(size = 3, alpha = .5) +
+  # geom_text_repel() +
+  xlab("PCoA 1") +
+  ylab("PCoA 2") +
+  theme_classic()
+pcoa_graph
+
+# Save the plot as an image file (e.g., PNG, PDF, SVG)
+ggsave("pcoa_graph.png", width = 6, height = 4, dpi = 300)
+```
+
+
+
