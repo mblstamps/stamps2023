@@ -3,7 +3,9 @@ title: "Data Analysis with R"
 subtitle: "The basics"
 author: "Sarah Teichman"
 date: ""
-output: ioslides_presentation
+output: 
+  ioslides_presentation: 
+    keep_md: yes
 ---
 
 ## What is R
@@ -63,14 +65,24 @@ RStudio has a four pane layout.
 
 Use the **console** to run individual lines of code.
 
-```{r}
+
+```r
 5 + 384
 ```
 
-```{r}
+```
+## [1] 389
+```
+
+
+```r
 x <- 10 # set variable with <- operator :) 
 y = 6 # set variable with = operator :( 
 x + y
+```
+
+```
+## [1] 16
 ```
 
 ## Editor
