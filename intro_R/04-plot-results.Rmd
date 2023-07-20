@@ -1,0 +1,132 @@
+---
+title: "04: pivots_and_plots"
+author: "Bryshal Moore & Hannah Houts"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+
+If you were stuck on section 3 (or closed your session and are just coming back), goahead and tun this code to load in your data tables:
+```{r}
+library(tidyverse)
+
+covariates <- read_tsv("data/FWS_covariates.txt")
+abundances <- read_tsv("data/FWS_OTUs.txt")%>% 
+  rename(taxonomy = `...1`)
+```
+
+
+
+## Pivots
+Pivoting lets you reorganize the structure of your data by rearranging columns and rows. This can be crutial to getting data in the right format for plotting. (you might be familiar with this concept from excel, or `melt` in python)
+
+You can pivot data wide or long. Wide data has more columns, and there is some type of data stored in the column names (e.g. sample, year, location). Long data has fewer columns, and the data that used to be part of the column names is now stored in a category column, with the values along side it. 
+
+
+The `pivot_wider()` function in R is used to transform data from a longer format to a wider format, allowing you to spread values across multiple columns based on a key-value pair. Conversely, the `pivot_longer()` function is used to transform data from a wider format to a longer format, where multiple columns are combined into key-value pairs, providing a more compact representation of the data.
+
+let's try this with our abundances table. recall the column names:
+```{r}
+names(abundances)
+```
+Notice that many of the column names are sample ids. We can pivot the data longer, by creating a column called "sample", and storing the count data in a column along side ("count").
+
+note: we are saving this as a new variable, to work with further in a bit. 
+```{r}
+ abundances_long <- abundances %>% 
+  pivot_longer(
+    !taxonomy, #pivot all the rows except taxonomy
+    names_to = "sample", values_to = "count"
+  )
+abundances_long
+```
+
+Now we want to take `abundance_long`, and pivot it wider _*by taxonomy*_, instead of by sample. 
+
+
+```{r}
+abundances_wide_tax <- abundances_long %>% 
+  pivot_wider(
+    names_from = taxonomy,
+    values_from = count
+    )
+abundances_wide_tax
+```
+
+
+
+
+## Plotting Your Hard Work!
+
+Lets extract something cool out of this new table! Its nice to end the day with an image.
+
+You don't need to deeply understand this code (we will cover more on Saturday morning), but feel free to ask questions, or poke/break/tinker as much as you like. 
+
+Note that we needed that `abundances_wide_tax` table to make this plot. Good thing we have tidyverse ;)
+```{r}
+if (!requireNamespace("vegan", quietly = TRUE)) {
+     install.packages("vegan")
+}
+library(vegan)
+
+    # makes a table in the form of a matrix, where every value in the table is numeric 
+abund_matrix <- as.matrix(
+                          abundances_wide_tax %>% 
+                          select(!sample) # eliminates the sample column, which is not numeric.  
+                          )
+
+distances <- vegdist(abund_matrix, method = "euclidean") # calculates the distances between samples in 387 dimensions
+
+
+pcoa_plotting_data <- cmdscale(distances, eig= TRUE, k=2) # reduces dimensions 
+                    # cmd stands for classical multidimensional scaling
+
+pcoa_point_data <- as.data.frame(pcoa_plotting_data$points) # extracts plottable x,y coordinates from PCoA plot
+
+pcoa_point_data$sample <- NA # add a new empty column
+pcoa_point_data$sample <- abundances_wide_tax$sample  # fill that column with contents of sample column from the abundances_wide_tax table
+
+
+covariates <- covariates %>% 
+  rename(sample=SampleName) 
+
+pcoa_w_metadata <- inner_join(pcoa_point_data, covariates, by = "sample") # merges the covariates table with the pcoa table
+
+
+pcoa_w_metadata # take a peek at the final table, then we will plot!
+```
+
+```{r}
+#Plot by Location
+ggplot(pcoa_w_metadata,
+       aes(
+         x=V1, 
+         y=V2, 
+         color = Location
+           )
+       ) + 
+  geom_point(size = 3, alpha = .5) +
+  # geom_text_repel() +
+  xlab("PCoA 1") +
+  ylab("PCoA 2") 
+
+```
+
+```{r}
+#Plot by season
+ggplot(pcoa_w_metadata,
+       aes(
+         x=V1, 
+         y=V2, 
+         color = Season
+           )
+       ) + 
+  geom_point(size = 3, alpha = .5) +
+  # geom_text_repel() +
+  xlab("PCoA 1") +
+  ylab("PCoA 2") 
+
+```
+
+Great work!
