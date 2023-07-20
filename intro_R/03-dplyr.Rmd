@@ -2,10 +2,7 @@
 title: "03: dplyr"
 author: "Hannah E. Houts"
 output: 
-  html_document:
-    toc: true
-    theme: united
-
+  html_document
 ---
 
 
@@ -190,57 +187,23 @@ abundances %>%
   relocate(JPA_Jan, log_JPA_Jan)
 ```
 
-
-## pivots
-to make this data set a little more malleable, we are going to pivot it
-
-you can pivot data wide or long. Wide data has more columns, and there is some type of data stored in the column names. Long data has fewer columns, and the data that used to be part of the column names is now stored in a category column, with the values along side it. 
-
-
+Run this code to get a column that contains the phylum category for each observation.
 ```{r}
- abundances_long <- abundances %>% 
-  pivot_longer(
-    !taxonomy, #pivot all the rows except taxonomy
-    names_to = "sample", values_to = "count"
-  ) %>% 
-  relocate(!taxonomy)
-abundances_long
+abundances <- abundances %>%
+  mutate(phylum = str_extract(taxonomy, "(?<=;)[^;]+(?=;)")) 
+abundances
 ```
-
-You could pivot the data back to wide form (so some data is stored in the column variables) like this.
-```{r}
- abundances_long %>% 
-  pivot_wider(
-    names_from = sample, 
-    values_from = count
-  ) %>% 
-  relocate(!taxonomy)
-```
-
 
 ## group by and summarize
 group_by() allows you to define groups within the data set based on specific variables. Grouping the data is often a precursor to performing summary operations on the grouped data, like summarize. The summarize() function is used to calculate summary statistics or perform other operations on grouped data. It allows you to specify various summarization functions (e.g., mean(), sum(), max(), custom functions) to apply to a specific variable for each group. The result is a new summarized data set where each row represents a group and each column contains the summarized values.
 
-Run this code to get a column that contains the phylum category for each observation.
-```{r}
-abundances_long <- abundances_long %>%
-  mutate(phylum = str_extract(taxonomy, "(?<=;)[^;]+(?=;)")) 
-abundances_long
-```
+
 
 The function `group_by()` define a category. Then we're using summarize to calculate the sum, _by group_. 
 Here its every 
 ```{r}
-abundances_long %>%
+abundances %>%
   group_by(phylum) %>% 
-  summarize(phylum_count = sum(count))
+  summarize(phylum_count_MBL_Feb = sum(MBL_Feb))
 ```
 
-we can group by multiple variables. here, we group by phylum and sample.
-```{r}
-abundances_long %>%
-  group_by(phylum, sample) %>% 
-  summarize(phylum_count = sum(count))
-```
-
-### trying out a plot!
