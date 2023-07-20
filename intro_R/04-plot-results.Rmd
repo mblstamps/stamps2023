@@ -23,6 +23,15 @@ abundances_long <- abundances %>%
     names_to = "sample", values_to = "count"
     ) %>% 
   relocate(!taxonomy)
+```
+
+
+```{r}
+abundances_wide_tax <- abundances_long %>% 
+  pivot_wider(
+    names_from = taxonomy,
+    values_from = count
+    ) 
 
 abundances_long <- abundances_long %>%
   mutate(phylum = str_extract(taxonomy, "(?<=;)[^;]+(?=;)")) 
@@ -41,7 +50,7 @@ abundances_long <- abundances_long %>%
 ```
 
 ```{r}
-abundances
+abundances_wide_tax
 
 ```
 
@@ -49,25 +58,59 @@ abundances
 
 
 ```{r}
-abund_matrix <- as.matrix(abundances %>% select(!taxonomy))
+abund_matrix <- as.matrix(abundances_wide_tax %>% select(!sample))
 #abund_matrix <- t(abund_matrix)
 distances <- vegdist(abund_matrix, method = "euclidean")
-pcoa_plotting_data <- cmdscale(distances, eig= TRUE, k=2)
-pcoa_point_data <- as.data.frame(pcoa_plotting_data$points)
-pcoa_point_data$taxonomy <- NA
-pcoa_point_data$taxonomy <- abundances$taxonomy
 
-pcoa_w_metadata <- inner_join(pcoa_point_data, abundances, by = "taxonomy")
+
+pcoa_plotting_data <- cmdscale(distances, eig= TRUE, k=2) # classical multidimensional scaling
+pcoa_point_data <- as.data.frame(pcoa_plotting_data$points)
+pcoa_point_data$sample <- NA
+pcoa_point_data$sample <- abundances_wide_tax$sample
+
+covariates <- covariates %>% 
+  rename(sample=SampleName)
+
+pcoa_w_metadata <- inner_join(pcoa_point_data, covariates, by = "sample")
 pcoa_w_metadata
+```
+
+```{r}
+
 
 #Plot the results with ggplot2
-ggplot(pcoa_w_metadata, aes(x=V1, y=V2, label = taxonomy, color = )) + geom_point(size = 3, alpha = .5) +
+ggplot(pcoa_w_metadata,
+       aes(
+         x=V1, 
+         y=V2, 
+#         label = taxonomy, 
+         color = Season
+           )
+       ) + 
+  geom_point(size = 3, alpha = .5) +
   # geom_text_repel() +
   xlab("PCoA 1") +
   ylab("PCoA 2") +
   theme_classic()
 #pcoa_graph
 ```
+
+```{r}
+ggplot(pcoa_w_metadata,
+       aes(
+         x=V1, 
+         y=V2, 
+#         label = taxonomy, 
+         color = Location
+           )
+       ) + 
+  geom_point(size = 3, alpha = .5) +
+  # geom_text_repel() +
+  xlab("PCoA 1") +
+  ylab("PCoA 2") +
+  theme_classic()
+```
+
 
 #Define dataframes
 ```{r}
