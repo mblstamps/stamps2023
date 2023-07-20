@@ -39,6 +39,12 @@ Download [here](https://posit.co/download/rstudio-desktop/).
   - often available through your institution 
   - may have computational advantages
   - useful in a course setting like this one! 
+  
+## How to access RStudio server
+
+- find your personal R Studio server link from [this spreadsheet](https://hackmd.io/oz5sTY9KRCqdHHkM9iNJyg?view) 
+- username: stamps
+- password: stamps2023
 
 ## RStudio organization 
 
@@ -105,7 +111,7 @@ Use the **editor** for opening and writing scripts.
 - CRAN package repository has ~20,000 packages
   - most packages available here
   - install with `install.packages("package_name")`
-  - load in each script with `library(package_name)`
+  - load in each R session with `library(package_name)`
 - Bioconductor has ~2000 packages
 - anyone can make their own package (often available to download on GitHub)
 
@@ -114,11 +120,7 @@ Use the **editor** for opening and writing scripts.
 - in R scripts (.R), each line is evaluated unless it is a comment 
   - `# this is a comment` 
 - in R Markdown files (.Rmd), you can combine code, output, and text
-  - codes in "chunks", anything within chunk is evaluated 
+  - code in "chunks", anything within chunk is evaluated 
   - anything outside of chunk is output as text
 - when compiled or "knit" .Rmd files turn into HTML, PDF, slides, webpages, etc.
-- install by installing the `rmarkdown` package from Cran 
 
-```{r, eval = FALSE}
-install.packages('rmarkdown')
-```

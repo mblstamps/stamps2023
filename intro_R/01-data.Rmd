@@ -12,9 +12,9 @@ In this tutorial, we will go through working with data in R. We will see how to 
 
 ## File preparation 
 
-Before we load in our data, we need to make sure that we are in the correct working directory. Use the Files pane to locate the `data` folder that you have downloaded (if working with R locally) or uploaded (if working with the R Studio server). This folder should contain files `FWS_covariates.txt` and `FWS_OTUs.txt`. 
+Before we load in our data, we need to make sure that we are in the correct working directory. Use the Files pane to locate the "intro_R" folder that you have opened from your zip file. 
 
-Now, check your working directory with `getwd()`. You want your working directory to be the folder that **contains** the `data` folder. Change your working directory to the appropriate folder with `setwd()`. For example, if the output to `getwd()` is "/Users/you/Documents" but you have saved your `data` folder in a sub-folder of `Documents` called `stamps`, you would run `setwd("stamps")`. Check you're in the current folder by running `getwd()` again. 
+Now, check your working directory by running `getwd()` in your console. Change your working directory to the "intro_R" folder with `setwd()` (also in your console). For example, if the output to `getwd()` is "/Users/you/Documents" but you have saved your "intro_R" folder in a sub-folder of "Documents" called "STAMPS, you would run `setwd("STAMPS")`. Check you're in the current folder by running `getwd()` again. 
 
 ## Reading in data 
 
@@ -25,7 +25,7 @@ covariates <- read.csv("data/FWS_covariates.txt", sep = "\t")
 abundances <- read.csv("data/FWS_OTUs.txt", sep = "\t", row.names = 1, header = T)
 ```
 
-Once you have run the code above, you should see a difference in your environment. You now should have two objects in your environment. You should see that `abundances` has 387 observations of 12 variables and `covariates` has 12 observations of 5 variables. What happens when you click on `abundances` object in the environment? 
+Once you have run the code above, you will see a difference in your environment. You should now have two objects in your environment. You can see that `abundances` has 387 observations of 12 variables and `covariates` has 12 observations of 5 variables. What happens when you click on `abundances` object in the environment? 
 
 ## "Meeting" your data 
 
@@ -106,9 +106,13 @@ class(vec_log)
 To extract one or multiple values in a vector we use the indices of those values in square brackets. 
 
 ```{r}
+# get the first value of vec
 vec[1]
+# get the third value of vec_num
 vec_num[3]
+# get the first through second values of vec_log
 vec_log[1:2]
+# get the first and third values of vec
 vec[c(1, 3)]
 ```
 

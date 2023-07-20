@@ -361,20 +361,15 @@ data types in R.</p>
 <div id="file-preparation" class="section level2">
 <h2>File preparation</h2>
 <p>Before we load in our data, we need to make sure that we are in the
-correct working directory. Use the Files pane to locate the
-<code>data</code> folder that you have downloaded (if working with R
-locally) or uploaded (if working with the R Studio server). This folder
-should contain files <code>FWS_covariates.txt</code> and
-<code>FWS_OTUs.txt</code>.</p>
-<p>Now, check your working directory with <code>getwd()</code>. You want
-your working directory to be the folder that <strong>contains</strong>
-the <code>data</code> folder. Change your working directory to the
-appropriate folder with <code>setwd()</code>. For example, if the output
+correct working directory. Use the Files pane to locate the “intro_R”
+folder that you have opened from your zip file.</p>
+<p>Now, check your working directory by running <code>getwd()</code> in
+your console. Change your working directory to the “intro_R” folder with
+<code>setwd()</code> (also in your console). For example, if the output
 to <code>getwd()</code> is “/Users/you/Documents” but you have saved
-your <code>data</code> folder in a sub-folder of <code>Documents</code>
-called <code>stamps</code>, you would run <code>setwd(&quot;stamps&quot;)</code>.
-Check you’re in the current folder by running <code>getwd()</code>
-again.</p>
+your “intro_R” folder in a sub-folder of “Documents” called “STAMPS, you
+would run <code>setwd(&quot;STAMPS&quot;)</code>. Check you’re in the current
+folder by running <code>getwd()</code> again.</p>
 </div>
 <div id="reading-in-data" class="section level2">
 <h2>Reading in data</h2>
@@ -382,9 +377,9 @@ again.</p>
 data.</p>
 <pre class="r"><code>covariates &lt;- read.csv(&quot;data/FWS_covariates.txt&quot;, sep = &quot;\t&quot;)
 abundances &lt;- read.csv(&quot;data/FWS_OTUs.txt&quot;, sep = &quot;\t&quot;, row.names = 1, header = T)</code></pre>
-<p>Once you have run the code above, you should see a difference in your
-environment. You now should have two objects in your environment. You
-should see that <code>abundances</code> has 387 observations of 12
+<p>Once you have run the code above, you will see a difference in your
+environment. You should now have two objects in your environment. You
+can see that <code>abundances</code> has 387 observations of 12
 variables and <code>covariates</code> has 12 observations of 5
 variables. What happens when you click on <code>abundances</code> object
 in the environment?</p>
@@ -402,6 +397,11 @@ respectively.</p>
 <pre><code>## [1] 12  5</code></pre>
 <pre class="r"><code>dim(abundances)</code></pre>
 <pre><code>## [1] 387  12</code></pre>
+<pre class="r"><code># we could also just get the number of rows or columns
+nrow(covariates)</code></pre>
+<pre><code>## [1] 12</code></pre>
+<pre class="r"><code>ncol(covariates)</code></pre>
+<pre><code>## [1] 5</code></pre>
 <p>Now that we know how big our data is, we may want to know what
 variables are in our data. The function <code>names()</code> will give
 us variable names. The function <code>row.names()</code> will give us
@@ -562,13 +562,17 @@ class(vec_log)</code></pre>
 <pre><code>## [1] &quot;logical&quot;</code></pre>
 <p>To extract one or multiple values in a vector we use the indices of
 those values in square brackets.</p>
-<pre class="r"><code>vec[1]</code></pre>
+<pre class="r"><code># get the first value of vec
+vec[1]</code></pre>
 <pre><code>## [1] &quot;5&quot;</code></pre>
-<pre class="r"><code>vec_num[3]</code></pre>
+<pre class="r"><code># get the third value of vec_num
+vec_num[3]</code></pre>
 <pre><code>## [1] -3</code></pre>
-<pre class="r"><code>vec_log[1:2]</code></pre>
+<pre class="r"><code># get the first through second values of vec_log
+vec_log[1:2]</code></pre>
 <pre><code>## [1] TRUE TRUE</code></pre>
-<pre class="r"><code>vec[c(1, 3)]</code></pre>
+<pre class="r"><code># get the first and third values of vec
+vec[c(1, 3)]</code></pre>
 <pre><code>## [1] &quot;5&quot;    &quot;TRUE&quot;</code></pre>
 <p>We can also perform mathematical and logical operations on
 vectors.</p>
@@ -663,12 +667,35 @@ length.</p>
 ## [376]    0   68    0   36    0    0    0    0    0    0    0 1924</code></pre>
 <pre class="r"><code>class(abundances$JPA_Jan)</code></pre>
 <pre><code>## [1] &quot;integer&quot;</code></pre>
+<p>Because a data frame has rows and columns, if we want to subset from
+it we need to use a square bracket with multiple indices separated by
+commas.</p>
+<pre class="r"><code># get the 1st observation of the 3rd variable 
+covariates[1, 3]</code></pre>
+<pre><code>## [1] &quot;Jan&quot;</code></pre>
+<pre class="r"><code># get the 5th observation of the last three variables 
+ncol(covariates)</code></pre>
+<pre><code>## [1] 5</code></pre>
+<pre class="r"><code>covariates[5, 3:5]</code></pre>
+<pre><code>##   Month Season      Type
+## 5   Jan Winter Reservoir</code></pre>
+<pre class="r"><code># get all observations for the 1st variable 
+covariates[, 1]</code></pre>
+<pre><code>##  [1] &quot;JPA_Jan&quot; &quot;JPA_Feb&quot; &quot;JPA_May&quot; &quot;JPA_Jun&quot; &quot;LOP_Jan&quot; &quot;LOP_Feb&quot; &quot;LOP_Jun&quot;
+##  [8] &quot;LOP_Jul&quot; &quot;MBL_Jan&quot; &quot;MBL_Feb&quot; &quot;MBL_Jun&quot; &quot;MBL_Aug&quot;</code></pre>
+<pre class="r"><code># get the 10th observation for all variables 
+covariates[10, ]</code></pre>
+<pre><code>##    SampleName Location Month Season    Type
+## 10    MBL_Feb      MBL   Feb Winter Outfall</code></pre>
+<pre class="r"><code># get the 4th observation of the variable &quot;Season&quot; 
+covariates$Season[4]</code></pre>
+<pre><code>## [1] &quot;Summer&quot;</code></pre>
 <p>Exercise: Extract the value from the 5th observation of
 <code>covariates</code> for the variable “Season.”</p>
 <p>Exercise: What is the count of
 “Bacteria;Acidobacteria;Holophagae;Holophagales;Holophagaceae;Geothrix”
-for the first observation listed in the <code>covariates</code> dataset
-collected in “Summer”?</p>
+for the first observation listed in the <code>covariates</code> data
+frame collected in “Summer”?</p>
 </div>
 
 
