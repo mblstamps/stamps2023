@@ -49,9 +49,13 @@ Why does line 40 produce an error while line 41 does not? This is a great time t
 ?head
 ```
 
-Each function has its own arguments which can be found in its documentation. Arguments have expected orders (`head()` expects to receive first the object to take the first values from, then the number of objects). These orders can be overridden by using argument names. Some arguments are required (such as the object for `head()`) and some arguments are optional (such as `n` for `head()`). 
+Each function has its own arguments which can be found in its documentation. Arguments have expected orders (`head()` expects to receive first the object to take the initial values from, then the number of objects). This order can be overridden by using argument names. Some arguments are required (such as the object `x` for `head()`) and some arguments are optional (such as `n` for `head()`). 
 
 Exercise: Use the documentation to use the function `sort()` to sort the counts in the "JPA_JAN" column of `abundances` from highest to lowest. 
+
+```{r}
+
+``` 
 
 ## Writing functions in R
 
@@ -78,7 +82,7 @@ Exercise: Fill in missing elements of the function below to calculate the relati
 ```{r, eval = FALSE}
 compute_rel_abund <- function(___) { # add a required argument named "index" 
   
-  index_abund <- abundances[__,__] # use the argument index to choose the         appropriate column of abundances 
+  index_abund <- abundances[__,__] # use the argument index to choose the appropriate column of abundances 
   
   index_tot <- _____(index_abund) # use the correct function to get the total counts for the column of abundances 
   
