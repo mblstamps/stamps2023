@@ -1,11 +1,20 @@
-# install libraries
-install.packages('dplyr')
-install.packages('ggplot2')
+# List of packages to check and install if needed
+packages_to_install <- c("ggplot2", "dplyr")
 
+# Function to check and install packages
+install_if_missing <- function(packages) {
+  for (package in packages) {
+    if (!requireNamespace(package, quietly = TRUE)) {
+      install.packages(package)
+    }
+  }
+}
+
+# Call the function with the list of packages
+install_if_missing(packages_to_install)
 # Load the necessary libraries
 library(ggplot2)
 library(dplyr)
-
 # Get the file path from the command-line arguments
 args <- commandArgs(trailingOnly = TRUE)
 
