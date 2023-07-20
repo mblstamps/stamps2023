@@ -74,8 +74,10 @@ abundances <- read_tsv("data/FWS_OTUs.txt")
 ```
 
 
-### Exercise: Please take a minute to explore the differences between the tables loaded with read.csv and read_tsv. Write down what you notice
+### Exercise 
+Please take a minute to explore the differences between the tables loaded with read.csv and read_tsv. Write down what you notice
 - 
+-
 
 
 ## select & filter (and piping!)
@@ -110,7 +112,7 @@ You can also combine multiple `select()` criteria. `select()` will also set the 
 abundances %>% 
   select(MBL_Aug | JPA_Jan | LOP_Jun)
 ```
-
+the `|` operator is a Boolean "or" operation `&` is the "and" operator
 
 `filter()` is used to filter rows by their contents. 
 
@@ -144,7 +146,7 @@ abundances %>%
 ```
 there are other ways to do this ;)
 
-### Exercise:
+### Exercise
 
 - Combine Select and Filter, generate a table from covariates that contains SampleName and Location, but only in the Summer season. 
 

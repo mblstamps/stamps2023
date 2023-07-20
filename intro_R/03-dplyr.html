@@ -369,14 +369,16 @@ display: none;
 <li><a href="#lesson-3---dplyr-and-tidyverse" id="toc-lesson-3---dplyr-and-tidyverse">Lesson 3 - dplyr and
 Tidyverse</a></li>
 <li><a href="#loading-in-data-for-dplyr" id="toc-loading-in-data-for-dplyr">Loading in data for dplyr</a></li>
-<li><a href="#readr" id="toc-readr">readr</a></li>
-<li><a href="#exercise-please-take-a-minute-to-explore-the-differences-between-the-tables-loaded-with-read.csv-and-read_tsv.-write-down-what-you-notice" id="toc-exercise-please-take-a-minute-to-explore-the-differences-between-the-tables-loaded-with-read.csv-and-read_tsv.-write-down-what-you-notice">###
-Exercise: Please take a minute to explore the differences between the
-tables loaded with read.csv and read_tsv. Write down what you
-notice</a></li>
+<li><a href="#readr" id="toc-readr">readr</a>
+<ul>
+<li><a href="#exercise" id="toc-exercise">Exercise</a></li>
+</ul></li>
+<li><a href="#please-take-a-minute-to-explore-the-differences-between-the-tables-loaded-with-read.csv-and-read_tsv.-write-down-what-you-notice" id="toc-please-take-a-minute-to-explore-the-differences-between-the-tables-loaded-with-read.csv-and-read_tsv.-write-down-what-you-notice">Please
+take a minute to explore the differences between the tables loaded with
+read.csv and read_tsv. Write down what you notice</a></li>
 <li><a href="#select-filter-and-piping" id="toc-select-filter-and-piping">select &amp; filter (and piping!)</a>
 <ul>
-<li><a href="#exercise" id="toc-exercise">Exercise:</a></li>
+<li><a href="#exercise-1" id="toc-exercise-1">Exercise</a></li>
 </ul></li>
 <li><a href="#rename-relocate" id="toc-rename-relocate">rename &amp;
 relocate</a></li>
@@ -484,11 +486,16 @@ abundances_baseR &lt;- read.csv(&quot;data/FWS_OTUs.txt&quot;, sep = &quot;\t&qu
 ## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
 ## Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ## • `` -&gt; `...1`</code></pre>
+<div id="exercise" class="section level3">
+<h3>Exercise</h3>
 </div>
-<div id="exercise-please-take-a-minute-to-explore-the-differences-between-the-tables-loaded-with-read.csv-and-read_tsv.-write-down-what-you-notice" class="section level2">
-<h2>### Exercise: Please take a minute to explore the differences
-between the tables loaded with read.csv and read_tsv. Write down what
-you notice</h2>
+</div>
+<div id="please-take-a-minute-to-explore-the-differences-between-the-tables-loaded-with-read.csv-and-read_tsv.-write-down-what-you-notice" class="section level2">
+<h2>Please take a minute to explore the differences between the tables
+loaded with read.csv and read_tsv. Write down what you notice</h2>
+<ul>
+<li></li>
+</ul>
 </div>
 <div id="select-filter-and-piping" class="section level2">
 <h2>select &amp; filter (and piping!)</h2>
@@ -581,6 +588,8 @@ they are ordered exactly how they’re listed in the command:</p>
 ##  9       0       0       0
 ## 10       0       0       0
 ## # ℹ 377 more rows</code></pre>
+<p>the <code>|</code> operator is a Boolean “or” operation
+<code>&amp;</code> is the “and” operator</p>
 <p><code>filter()</code> is used to filter rows by their contents.</p>
 <p>remember this table</p>
 <pre class="r"><code>covariates</code></pre>
@@ -645,8 +654,8 @@ they are ordered exactly how they’re listed in the command:</p>
 ## # ℹ 124 more rows
 ## # ℹ 3 more variables: MBL_Feb &lt;dbl&gt;, MBL_Jun &lt;dbl&gt;, MBL_Aug &lt;dbl&gt;</code></pre>
 <p>there are other ways to do this ;)</p>
-<div id="exercise" class="section level3">
-<h3>Exercise:</h3>
+<div id="exercise-1" class="section level3">
+<h3>Exercise</h3>
 <ul>
 <li><p>Combine Select and Filter, generate a table from covariates that
 contains SampleName and Location, but only in the Summer
