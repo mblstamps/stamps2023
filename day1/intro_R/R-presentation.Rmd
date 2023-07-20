@@ -1,11 +1,12 @@
 ---
 title: "Data Analysis with R"
-subtitle: "The basics"
 author: "Sarah Teichman"
-date: ""
-output: 
-  ioslides_presentation: 
+date: ''
+output:
+  beamer_presentation: default
+  ioslides_presentation:
     keep_md: yes
+subtitle: The basics
 ---
 
 ## What is R
@@ -83,7 +84,7 @@ Use the **editor** for opening and writing scripts.
 - in R you are working in a folder on your computer 
   - `getwd()` to see (get) your working directory
   - `setwd()` to change (set) your working directory
-- run code with `Run` button (and options) or `Ctrl`/`⌘` + `Enter` for a single line 
+- run code with `Run` button (and options) or `Ctrl`/`Command` + `Enter` for a single line 
   
 ## Environment and History
 
