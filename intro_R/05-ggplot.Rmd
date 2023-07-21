@@ -14,22 +14,21 @@ ggplot2 (commonly just referred to as just ggplot) is a R package used to make h
 
 ## ggplot is included in the tidyverse package we used yesterday, but can also be installed independently. 
 ```{r}
-
+if (!requireNamespace("tidyverse, quietly = TRUE)) {
+     install.packages("tidyverse")
+#if (!requireNamespace("ggplot2", quietly = TRUE)) {
+     install.packages("ggplot2") # if for some reason you do not want tidyverse and only want the  ggplot package
 library(tidyverse) 
 #library(ggplot2) # if you only have ggplot2
 ```
 
 ## Commonly used Functions
 **geom_*()**
-The `geon_*() function is used to define the geometiic object for your plot some examples include:
- geom_point() creates scatter points for a scatter plot.
- geom_line() creates lines for a line plot.
- geom_bar() creates bars for a bar plot.
- geom_boxplot() creates boxplots for a box plot
-
-
-* aes()
-The `aes` function is used primarily to define the x and y axis
+The `geon_*() function used to define the geometiic object for your plot some examples for example [geom_point(), geom_line(), geom_bar(), geom_boxplot()]
+**geom_smooth
+** aes()**
+The `aes` function used primarily to define the x and y axis
+**labs() function used to customize label
 
 ## Load in the data
 ```{r}
