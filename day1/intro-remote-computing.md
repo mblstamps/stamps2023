@@ -1,3 +1,4 @@
+[![hackmd-github-sync-badge](https://hackmd.io/vJKO85dLRF-kxEi5bxRs8Q/badge)](https://hackmd.io/vJKO85dLRF-kxEi5bxRs8Q)
 
 [toc]
 
