@@ -1,0 +1,24 @@
+---
+title: '05: ggplot'
+author: "Bryshal Moore"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In yesterday's tutorial, we explored the creation PCoA plot using ggplot. Today, we'll be delving into ggplot in more detail, exploring its various features and functionalities. It's going to be an informative session that will help us gain a better understanding of this powerful tool.
+ 
+ggplot2 (commonly just referred to as just ggplot) is a R package used to make high quality plots for your data. It offers consistent synthax and allows for detailed customization of almost every element of your pltos. Visualization options range from bargraphs, boxplots, scatterplot, pie charts, histograms and more. 
+
+## ggplot is included in the tidyverse package we used yesterday, but can also be installed independently. 
+
+```{r }
+#install.packages("tidyverse") # if you need to install the tidyverve package that includes ggplot2
+#install.packages("ggplot2") if you need to install the ggplot2 and do not want the entire tidyverse package
+
+library(tidyverse) 
+#library(ggplot2) # if you only have ggplot2
+```
+
