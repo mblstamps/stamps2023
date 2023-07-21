@@ -13,12 +13,38 @@ In yesterday's tutorial, we explored the creation PCoA plot using ggplot. Today,
 ggplot2 (commonly just referred to as just ggplot) is a R package used to make high quality plots for your data. It offers consistent synthax and allows for detailed customization of almost every element of your pltos. Visualization options range from bargraphs, boxplots, scatterplot, pie charts, histograms and more. 
 
 ## ggplot is included in the tidyverse package we used yesterday, but can also be installed independently. 
-
-```{r }
-#install.packages("tidyverse") # if you need to install the tidyverve package that includes ggplot2
-#install.packages("ggplot2") if you need to install the ggplot2 and do not want the entire tidyverse package
+```{r}
 
 library(tidyverse) 
 #library(ggplot2) # if you only have ggplot2
 ```
 
+## Commonly used Functions
+**geom_*()**
+The `geon_*() function is used to define the geometiic object for your plot some examples include:
+ geom_point() creates scatter points for a scatter plot.
+ geom_line() creates lines for a line plot.
+ geom_bar() creates bars for a bar plot.
+ geom_boxplot() creates boxplots for a box plot
+
+
+* aes()
+The `aes` function is used primarily to define the x and y axis
+
+## Load in the data
+```{r}
+otus <- read_tsv("data/FWS_OTUs.txt")
+otus %>%
+  rename("taxonomy" = 1) %>%
+  pivot_longer(-1) %>%
+  separate(name, c("where", "when"), remove = F) %>%
+  group_by(where, when) %>%
+  mutate(relative_abundance = value/sum(value)) %>%
+  ggplot(aes(x = name, 
+             y = relative_abundance, 
+             col = when)) + 
+  geom_jitter(width = 0) +
+  ylab("Relative\nabundance") + 
+  xlab("") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
