@@ -1,3 +1,4 @@
+[![hackmd-github-sync-badge](https://hackmd.io/qtds9NkrTHSKnrrh2_I64Q/badge)](https://hackmd.io/qtds9NkrTHSKnrrh2_I64Q)
 
 ## Section 1: Introduction to UNIX
 ----------------------------------
