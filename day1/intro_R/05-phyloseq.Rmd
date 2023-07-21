@@ -1,0 +1,207 @@
+---
+title: "05: phyloseq"
+author: "Sarah Teichman"
+date: "2023-07-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Phyloseq
+
+`phyloseq` is an R package that is used to store, analyze, and plot microbiome abundance data. We will start by importing it from the Bioconductor package repository. 
+
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+if (!requireNamespace("phyloseq", quietly = TRUE)) {
+     BiocManager::install("phyloseq")
+}
+
+# load in the phyloseq package
+library(phyloseq)
+
+# load in tidyverse
+library(tidyverse)
+```
+
+If you have any issues installing `phyloseq` on your local computer, we recommend switching over to your R Studio server account where `phyloseq` is already installed.
+
+## Load in data 
+
+We'll be using the same `covariates` and `abundances` datasets and show how to make them into a `phyloseq` object. 
+
+```{r}
+covariates <- read.csv("data/FWS_covariates.txt", sep = "\t")
+abundances <- read.csv("data/FWS_OTUs.txt", sep = "\t", row.names = 1, header = T)
+```
+
+## Creating phyloseq objects
+
+A `phyloseq` object is made up of three tables. 
+
+1. OTU table
+2. Taxonomy table
+3. Sample data table
+
+Let's prepare these three tables from our data. 
+
+```{r}
+# our covariates data frame is our sample data table. 
+# let's move the "SampleName" column to be row names for our data frame
+row.names(covariates) <- covariates$SampleName
+covariates <- covariates %>% select(-SampleName)
+
+# our abundance table doesn't need to have all of the taxonomic information. 
+# let's update the row names by numbering our OTUs. 
+# first we'll save the current rownames, because we need that taxonomy information later
+taxonomy <- row.names(abundances)
+# replace row names with "taxa1" up through "taxa387" with the "paste0()" function
+row.names(abundances) <- paste0("taxa", 1:nrow(abundances))
+
+# now we can make a taxonomy table
+# we would like to separate each taxonomic identification into separate columns for each hierarchical level 
+# make a data frame for taxonomy 
+tax_df <- data.frame(tax = taxonomy)
+# separate the single column tax by creating a new column each time a ";" is seen
+# name the newly created columns based on their rank 
+tax_df_sep <- separate_wider_delim(data = tax_df, cols = tax, delim = ";",
+                            names = c("kingdom", "phylum", "class",
+                                      "order", "family", "genus"))
+# turn the data frame into a matrix 
+# (phyloseq prefers a matrix of taxonomy to a data frame)
+# (I don't know why)
+tax_mat <- as.matrix(tax_df_sep)
+# make sure the row names of the taxonomy matrix match the row names of the OTU table 
+row.names(tax_mat) <- row.names(abundances)
+# now we can finally make a phyloseq object! 
+phylo_obj <- phyloseq(otu_table(abundances, taxa_are_rows = TRUE), 
+                      tax_table(tax_mat), 
+                      sample_data(covariates))
+phylo_obj
+```
+
+Great, we have a `phyloseq` object! But what have we actually done here? 
+
+We have linked all of our information about our data (covariates for each sample, abundances, and taxonomic information about OTUs) into a single object. That's pretty cool! 
+
+## Using phyloseq objects
+
+Once we have our `phyloseq` object, we can do a lot with it! 
+
+Let's start out by learning the basics of it (which we probably already know from our explorations of the data). 
+
+```{r}
+# check out our sample data 
+nsamples(phylo_obj)
+sample_names(phylo_obj)
+sample_variables(phylo_obj)
+
+# check out our abundance data 
+sample_sums(phylo_obj)
+ntaxa(phylo_obj)
+head(taxa_sums(phylo_obj), 20)
+
+# check out our taxonomy table
+rank_names(phylo_obj)
+```
+
+We can also change the level of taxonomic classification we are working with. What if we only cared about differences up to the order level. 
+
+```{r}
+# use tax_glom to aggregate, where the second argument is the taxonomic level to aggregate to 
+phylo_order <- tax_glom(phylo_obj, "order")
+ntaxa(phylo_order)
+head(tax_table(phylo_order))
+# note that now the family and genus levels are all NA value because we have 
+# aggregated to the phylum level 
+# NA is a data type in R that refers to missing data or data that doesn't exist
+```
+
+We can also subset taxa. What if we only want to look at taxa from the phylum *Proteobacteria*? 
+
+```{r}
+# use subset_taxa to subset, using the second argument to specify which taxa you want at which taxonomic rank
+phylo_proteo <- subset_taxa(phylo_obj, phylum == "Proteobacteria")
+ntaxa(phylo_proteo)
+head(tax_table(phylo_proteo))
+```
+
+## Plotting phyloseq objects
+
+One very useful aspect of `phyloseq` is its analysis and plotting capacity. Although you could make any plot you want with the two data sets and some time spent with `dplyr` and `ggplot`, `phyloseq` makes this process more convenient for you. 
+
+Imagine we want to look into alpha diversity for our data. 
+
+```{r}
+# estimate several types of alpha diversity 
+estimate_richness(phylo_obj)
+# plot Shannon and Simpson diversity measures by location 
+# note: this plotting function is a wrapper for ggplot, so we can customize it as we would a ggplot object
+plot_richness(phylo_obj, x = "Location", color = "Season", measures = c("Shannon", "Simpson")) + 
+  # use a black and white background
+  theme_bw() + 
+  # add a title
+  ggtitle("Shannon and Simpson diversities by location") + 
+  # center the title
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Now imagine we want to make an ordination plot where we compare communities based on Bray-Curtis dissimilarities. 
+
+```{r}
+# calculate bray-curtis dissimilarities between each sample 
+# then perform dimension reduction with nMDS (non-metric Multi Dimensional Scaling)
+phylo_bray <- ordinate(phylo_obj, "NMDS", "bray")
+# color our plot by season 
+plot_ordination(phylo_obj, phylo_bray, type="samples", color="Season") +
+  # use a black and white background
+  theme_bw() + 
+  # add a title
+  ggtitle("nMDS of samples with Bray-Curtis dissimilarities") + 
+  # center the title
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+## Getting data out of phyloseq
+
+Finally, there are some settings where you might rather work with individual data tables than with your phyloseq object. Pretend for a moment that you started with your `phylo_obj` object and have no access to the `covariates` or `abundances` data frames. `phyloseq` has handy functions for us to extract each of its three tables. 
+
+```{r}
+# extract sample data table
+samp_tab <- sample_data(phylo_obj)
+head(samp_tab)
+
+# extract otu table
+otu_tab <- otu_table(phylo_obj)
+head(otu_tab)
+
+# extract taxonomy table
+taxon_tab <- tax_table(phylo_obj)
+head(taxon_tab)
+```
+
+Now you have each of these tables as their own R objects and can manipulate and analyze them however you would like!
+
+## Exercise
+
+Using the `phylo_obj` object, subset to a specific Phylum that you are interested in. Build an ordination plot based on the subsetted `phyloseq` object you've created using Bray-Curtis dissimilarities and nMDS (as in the above section) and color the points by the location where they were collected.
+
+*Hint*: subset to a specific Phylum with `subset_taxa()`. 
+
+*Hint*: locations are saved as the "Location" variable in the `covariates` dataset.
+
+```{r}
+
+```
+
+## References 
+
+```{r}
+citation("phyloseq")
+```
+
+Some materials adapted from this [tutorial](https://www.nicholas-ollberding.com/post/introduction-to-phyloseq/) by Nicholas Ollberding.
