@@ -1,5 +1,5 @@
 ---
-title: "05: phyloseq"
+title: "05: phyloseq (solutions)"
 author: "Sarah Teichman"
 date: "2023-07-21"
 output: html_document
@@ -195,7 +195,20 @@ Using the `phylo_obj` object, subset to only taxa that belong to *Firmicutes*. B
 *Hint*: locations are saved as the "Location" variable in the `covariates` dataset.
 
 ```{r}
-
+phylo_firm <- subset_taxa(phylo_obj, phylum == "Firmicutes")
+phylo_firm_bray <- ordinate(phylo_firm, "NMDS", "bray")
+# color our plot by season 
+plot_ordination(phylo_firm, phylo_firm_bray, type="samples",
+                color="Location") +
+  # use a black and white background
+  theme_bw() + 
+  # add a title
+  ggtitle("nMDS of samples with Bray-Curtis dissimilarities") + 
+  # add a subtitle
+  labs(subtitle = "only Firmicutes taxa") + 
+  # center the title and subtitle
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
 ```
 
 ## References 
