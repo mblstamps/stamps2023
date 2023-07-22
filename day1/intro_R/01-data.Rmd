@@ -182,7 +182,7 @@ covariates$Season[4]
 Exercise: Extract the value from the 5th observation of `covariates` for the variable "Season." 
 
 ```{r}
-
+                                                                                                                                                                                                                                                                                               
 ```
 
 Exercise: What is the count of "Bacteria;Acidobacteria;Holophagae;Holophagales;Holophagaceae;Geothrix" for the first observation listed in the `covariates` data frame collected in "Summer"? 

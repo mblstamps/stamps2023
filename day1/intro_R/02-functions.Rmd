@@ -80,17 +80,36 @@ top(covariates)
 Exercise: Fill in missing elements of the function below to calculate the relative abundances from a specific sample in `abundances` (note that samples are represented by columns). The user will specify the sample they want with the index of that column. Each "___" should be filled in with the correct code.
 
 ```{r, eval = FALSE}
-compute_rel_abund <- function(___) { # add a required argument named "index" 
+compute_rel_abund <- function(index) { # add a required argument named "index" 
   
-  index_abund <- abundances[__,__] # use the argument index to choose the appropriate column of abundances 
+  index_abund <- abundances[,index] # use the argument index to choose the appropriate column of abundances 
   
-  index_tot <- _____(index_abund) # use the correct function to get the total counts for the column of abundances 
+  index_tot <- count(index_abund) # use the correct function to get the total counts for the column of abundances 
   
   index_rel <- index_abund / index_tot
   
-  ___ # send the correct value back to the user
+  return(index_rel) # send the correct value back to the user
 }
 ```
+```{r}
+compute_rel_abund(4)
+```
+
+
+```{r}
+
+
+  
+  index_abund <- abundances[,3] # use the argument index to choose the appropriate column of abundances 
+  
+  index_tot <- sum(index_abund) # use the correct function to get the total counts for the column of abundances 
+  
+  index_rel <- index_abund / index_tot
+  
+  return(index_rel)
+compute_rel_abund(3)
+```
+
 
 Now check that your function works by running it on a the 3rd column of `abundances`. Make sure that the result sums to 1!
 
