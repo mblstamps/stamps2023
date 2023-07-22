@@ -1,0 +1,209 @@
+---
+title: "03: dplyr"
+author: "Hannah E. Houts"
+output: 
+  html_document
+---
+
+
+# STAMPS 2023
+## Lesson 3 - dplyr and Tidyverse
+
+
+Tidyverse is a suite of powerful and cohesive R packages, including dplyr, ggplot2, and tidyr, that share similar syntax.
+Many (but not all!) people find tidyverse commands to be more intuitive than base R commands, but there are other benefits to using tidyverse, very nicely described in this [Carpentries lesson.](https://datacarpentry.org/R-ecology-lesson/03-dplyr.html#what-are-dplyr-and-tidyr)
+
+dplyr is an R package in the Tidyverse suite. Dplyr has commands that help address common data manipulation challenges:
+
+`select()` picks variables (think columns) based on their names.
+`filter()` picks cases based on their values (think filtering rows).
+`arrange()` changes the ordering of the rows.
+`relocate()` changes the order of columns.
+`mutate()` adds new variables that are functions of existing variables
+`summarise()` reduces multiple values down to a single summary.
+
+These also combine with `group_by()` which allows you to perform any operation “by group”. 
+
+
+## Loading in data for dplyr
+Before we can read in our data in a dplyr-friendly way, we need to install some packages. 
+
+Optionally, you can individually install and load readr, dplyr, etc like this
+```{r}
+
+if (!requireNamespace("readr", quietly = TRUE)) {
+     install.packages("readr")
+}
+library(readr)
+
+
+if (!requireNamespace("dplyr", quietly = TRUE)) {
+     install.packages("dplyr")
+}
+library(dplyr)
+```
+
+but I prefer to just load the whole tidyverse suite like this:
+```{r}
+if (!requireNamespace("tidyverse", quietly = TRUE)) {
+     install.packages("tidyverse")
+}
+library(tidyverse)
+```
+
+(its perfectly valid to only install individual packages, especially if you want to increase loading speed for a polished workflow or if you have a weird command conflict)
+
+## readr
+
+Recall that we loaded in our tables using `read.csv`.
+We're going to add "baseR" to these table names, so we can look at them next to the tidyverse versions.
+```{r}
+covariates_baseR <- read.csv("data/FWS_covariates.txt", sep = "\t")
+abundances_baseR <- read.csv("data/FWS_OTUs.txt", sep = "\t", row.names = 1, header = T)
+```
+
+
+When planning to manipulate data with dplyr or other Tidyverse tools, `read_csv()` or `read_tsv()` are preferable. 
+`read_tsv()` is a readr command (part of the tidyverse)
+```{r}
+covariates <- read_tsv("data/FWS_covariates.txt")
+abundances <- read_tsv("data/FWS_OTUs.txt")
+```
+
+
+### Exercise 
+Please take a minute to explore the differences between the tables loaded with read.csv and read_tsv. Write down what you notice
+- 
+-
+
+
+## select & filter (and piping!)
+
+remind yourself what this table looks like:
+```{r}
+covariates
+```
+
+
+The dplyr command `select()` lets you select specific columns. 
+```{r}
+select(abundances, JPA_May, JPA_Jun)
+```
+
+
+Piping lets you state the first argument (the name of the table) before the command, and "pipe in" the data like this:
+```{r}
+abundances %>% 
+  select(JPA_May, JPA_Jun)
+```
+
+You can select with `contains()` or `starts_with()`, 
+
+```{r}
+abundances %>% 
+  select(contains("Jan"))
+```
+
+You can also combine multiple `select()` criteria. `select()` will also set the order of the columns, see that they are ordered exactly how they're listed in the command:
+```{r}
+abundances %>% 
+  select(MBL_Aug | JPA_Jan | LOP_Jun)
+```
+the `|` operator is a Boolean "or" operation `&` is the "and" operator
+
+`filter()` is used to filter rows by their contents. 
+
+remember this table
+```{r}
+covariates
+```
+
+```{r}
+covariates %>% 
+  filter(Location=="MBL")
+```
+you can combine filters too:
+```{r}
+covariates %>% 
+  filter(Location=="MBL" & Season == "Winter") 
+```
+
+here's a way to see taxa that aren't detected anywhere in winter
+```{r}
+names(abundances)
+abundances %>% 
+  filter(
+    JPA_Jan == 0 &
+    JPA_Feb == 0 &
+    LOP_Jan == 0 &  
+    LOP_Feb == 0 & 
+    MBL_Jan == 0 & 
+    MBL_Feb == 0 
+    )
+```
+there are other ways to do this ;)
+
+### Exercise
+
+- Combine Select and Filter, generate a table from covariates that contains SampleName and Location, but only in the Summer season. 
+
+- does it matter if you use select or filter first?
+
+
+
+
+##  rename & relocate
+
+notice that the first column has a weird name, probably because in the tsv there wasn't a column name, or these were "rownames" (row names are not really used in tidyverse)
+```{r}
+names(abundances)
+```
+
+
+we can rename our "..1" column like this 
+(note, the back ticks are required because the column name starts with a not-letter.)
+```{r}
+abundances <- abundances %>% 
+  rename(taxonomy = `...1`)
+abundances
+```
+
+We can move around column with `relocate()`. this is helpful if there is a particular few columns you are focusing on when exploring your data. 
+
+If you want to move a column from the first position to the last one, try this
+```{r}
+abundances %>% 
+  relocate(!taxonomy)
+```
+
+
+## mutate & arrange
+`mutate()` creates a modified data frame with the newly added or modified columns based on your specifications.
+
+
+```{r}
+abundances %>%
+  mutate(log_JPA_Jan = log(JPA_Jan)) %>% 
+  relocate(JPA_Jan, log_JPA_Jan)
+```
+
+Run this code to get a column that contains the phylum category for each observation.
+```{r}
+abundances <- abundances %>%
+  mutate(phylum = str_extract(taxonomy, "(?<=;)[^;]+(?=;)")) 
+abundances
+```
+
+## group by and summarize
+group_by() allows you to define groups within the data set based on specific variables. Grouping the data is often a precursor to performing summary operations on the grouped data, like summarize. The summarize() function is used to calculate summary statistics or perform other operations on grouped data. It allows you to specify various summarization functions (e.g., mean(), sum(), max(), custom functions) to apply to a specific variable for each group. The result is a new summarized data set where each row represents a group and each column contains the summarized values.
+
+
+
+The function `group_by()` define a category. Then we're using summarize to calculate the sum, _by group_. 
+Here its every 
+```{r}
+abundances %>%
+  group_by(phylum) %>% 
+  summarize(phylum_count_MBL_Feb = sum(MBL_Feb))
+```
+

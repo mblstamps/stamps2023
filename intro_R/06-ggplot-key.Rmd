@@ -1,0 +1,236 @@
+---
+title: '06: ggplot'
+author: "Hannah Houts & Bryshal Moore"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In yesterday's tutorial, we tested out generating a PCoA plot using ggplot (and vegan). Today, we'll delve into ggplot in more detail, exploring its various features and functionalities. 
+ 
+ggplot2 (commonly just referred to as just ggplot) is a R package used to make high quality plots for your data. 
+*ggplot2 is part of the tidyverse suite!*
+It offers consistent syntax and allows for detailed customization of almost every element of your plots. Visualization options range from bargraphs, boxplots, scatterplot, pie charts, histograms and more. 
+
+to get started, lets load tidyverse
+(we're going to use a few dplyr functions in addition to ggplot, so loading tidyverse is a quick solution)
+```{r}
+library(tidyverse)
+```
+
+Lets check out a new science (fiction) dataset, and check out it's columns:
+```{r}
+powers <- read_csv("super_data/super_hero_powers.csv")
+powers
+```
+
+
+see how a few of the names have spaces in them, and some of them start with uppercase letters? the package `janitor` has a function that "cleans up" column names according to their standards (read more here:https://rpubs.com/jenrichmond/clean_names)
+
+```{r}
+if (!requireNamespace("janitor", quietly = TRUE)) {
+     install.packages("janitor")
+}
+library(janitor)
+
+powers <- clean_names(powers)
+powers
+```
+
+### Practice 1.
+Try out janitor on the supers_hero_powers data
+```{r}
+superhero_info <- read_csv("super_data/heroes_information.csv")
+# add code to clean names below!
+
+superhero_info <- clean_names(superhero_info)
+```
+
+
+
+lets take that superpowers dataframe and make a plot!
+```{r}
+tabyl(dat = superhero_info$skin_color)
+
+superhero_info %>% 
+  arrange(desc(height))
+```
+
+say we want to make a bar chart to visualize the relative heights of superheros.
+This is about the simplest version we can make using ggplot. 
+
+```{r}
+superhero_info %>% 
+  ggplot(aes(x = name, y = height)) +
+  geom_col()
+```
+
+
+Although the above code is equivalent to:
+```{r}
+  ggplot(superhero_info, aes(x = name, y = height)) +
+  geom_col()
+```
+
+We tend to put the data first and then use the pipe (%>%) to send it to the ggplot() function. This is nice because when we add further data wrangling functions between the data and the ggplot(). For example, a filter!
+
+```{r}
+superhero_info %>% 
+  filter(skin_color == "green") %>%
+  ggplot(aes(x = name, y = height)) +
+  geom_col()
+```
+
+The lines that come before the ggplot() function are piped, whereas from ggplot() onwards you have to use +. This is because we are now adding different layers and customization to the same plot.
+
+aes() stands for aesthetics - things we can see. These set the axes for the plot, and infact you can just plot the aesthetics like this:
+```{r}
+superhero_info %>%
+  filter(skin_color == "green") %>% 
+  ggplot(aes(x = name, y = height)) 
+```
+Lets clean this up a little bit- we can fix those axis labels like this:
+```{r}
+superhero_info %>% 
+  filter(skin_color == "green") %>%
+  ggplot(aes(x = name, y = height)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+ # hjust sets the alignment of the text.
+  geom_col()
+```
+```{r}
+superhero_info %>% 
+  filter(skin_color == "green") %>%
+  ggplot(aes(x = name, y = height)) +
+  geom_col()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+ 
+  labs(title = "Heights of Super Heros", x = "Hero Name", y = "Height (cm)")
+```
+
+Adding another aesthetic, fill, lets us fill in color by a variable of interest. 
+```{r}
+superhero_info %>% 
+  filter(skin_color == "green") %>%
+  ggplot(aes(x = name, y = height, fill = gender)) +
+  geom_col()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+ 
+  labs(title = "Heights of Super Heros", x = "Hero Name", y = "Height (cm)")
+```
+
+
+### Practice 2. 
+edit the code below to make a barchart of your own, choosing your own:
+- filter
+- x, y, and fill aesthetic
+- title and axis labels
+
+try choosing a different x aesthetic in particular
+
+(tip: for a barchart, usually y is numeric data. )
+```{r}
+superhero_info %>% 
+  filter(publisher == "Marvel Comics" & alignment == "neutral") %>%
+  ggplot(aes(x = gender, y = height)) +
+  geom_col()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+ 
+  labs(title = "Heights of Super Heros", x = "Hero Name", y = "Height (cm)")
+```
+
+lets test out a scatter plot, by choosing a continuous variable for both the weights and height. note that the aesthetic for coloring the points is "color", not "fill", and the geom() layer is "point".
+
+```{r}
+superhero_info %>% 
+  ggplot(aes(x = weight, y = height, color = gender)) +
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+ 
+  labs(title = "Heights of Super Heros", x = "Weight", y = "Height (cm)")
+```
+
+## Applying to our microbial abundance data
+
+Lets test out some plotting with our microbial abundance data, first by generating a relative abundance column by running the code below
+```{r}
+abundances <- read_tsv("data/FWS_OTUs.txt")
+
+rel_abundances <- abundances %>%
+    rename("taxonomy" = `...1`) %>%
+    pivot_longer(!taxonomy, names_to = "name", values_to = "value") %>%
+    separate(name, c("where", "when"), remove = F) %>%
+    group_by(where, when) %>%
+    mutate(relative_abundance = value/sum(value))
+rel_abundances
+```
+
+Here we can make a scatter plot, plotting the relative abundance of each species by sample. adding `aplha = .5` in the geom layer makes the points 50% translucent
+```{r}
+rel_abundances %>% 
+  ggplot(aes(x = name, 
+             y = relative_abundance, 
+             col = when)) + 
+  geom_point(alpha=.5) +
+  labs(x = "", y = "Relative\nabundance")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
+
+
+
+Lets test out a new plot. Here is code to make a relative abundances
+
+
+```{r}
+rel_abundances <- rel_abundances %>% mutate(when = factor(when, 
+                       levels = c("Jan", "Feb", "May", "Jun", "Jul", "Aug"))) 
+
+
+```
+
+```{r}
+rel_abundances %>% 
+  filter(taxonomy == "Bacteria;Proteobacteria;Betaproteobacteria;Burkholderiales;Burkholderiaceae;Ralstonia") %>% 
+  ggplot(aes(x = name, 
+             y = relative_abundance, 
+             col = when)) + 
+  geom_point() +
+  labs(y = "Relative\nabundance")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
+
+### Practice 3. 
+Here is code to pivot the data again. first run this
+```{r}
+rel_abundances_wide <- abundances %>%
+  rename("taxonomy" = 1) %>%
+  pivot_longer(-1) %>%
+  mutate(relative_abundance = value/sum(value)) %>%
+  filter(taxonomy %in% c("Bacteria;Cyanobacteria;Cyanobacteria;SubsectionIV;Unassigned;Anabaena", "Bacteria;Proteobacteria;Betaproteobacteria;Burkholderiales;Burkholderiaceae;Ralstonia"))%>% 
+  select(!value) %>%
+  pivot_wider(names_from = taxonomy, 
+              values_from = relative_abundance) %>%
+  rename("Cyanobacteria" = 2, 
+         "Proteobacteria" = 3)
+
+rel_abundances_wide
+```
+
+
+
+
+
+Now, try to make a scatter plot of the relative abundances of Amy's favorite 2 taxa, against each other.
+
+- add the x & y aesthetics to match the 2 columns in rel_abundances_wide that represent Amy's favorite taxa.
+- debug the geom layer
+- fill in the x & y labels, and add a title
+
+
+
+```{r}
+rel_abundances_wide %>% 
+ggplot(aes(x =  Cyanobacteria,y = Proteobacteria)) + 
+  geom_point() +
+    labs(x="Amy's fav Cyanobacteria abundance", y = "Amy's fav Proteobacteria abundance", title = "Amy's fav Cyanobacteria abundance v. Amy's fav Proteobacteria abundance")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
+
+
