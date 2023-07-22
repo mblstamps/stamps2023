@@ -73,8 +73,8 @@ abundances <- read_tsv("data/FWS_OTUs.txt")
 
 ### Exercise 
 Please take a minute to explore the differences between the tables loaded with read.csv and read_tsv. Write down what you notice
-- 
--
+- in abundances, with tidyverse, taxonomy is in the first column. with base R taxonomy becomes the rownames, and taxonomy has no column heading (because it is rownames)
+- in covarriate, they appear to be the same!
 
 
 ## select & filter (and piping!)
@@ -146,10 +146,15 @@ there are other ways to do this ;)
 ### Exercise
 
 - Combine Select and Filter, generate a table from covariates that contains SampleName and Location, but only in the Summer season. 
+```{r}
+covariates %>% 
+  filter(Season == "Summer") %>% 
+  select(SampleName, Location) 
+```
 
 - does it matter if you use select or filter first?
 
-
+yes! if you select only sample name and location, the season column doesnt exist anymore! so you'll have to filter first :) 
 
 
 ##  rename & relocate
