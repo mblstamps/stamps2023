@@ -22,7 +22,7 @@ library(tidyverse)
 
 Lets check out a new science (fiction) dataset, and check out it's columns:
 ```{r}
-powers <- read_csv("super_data/super_hero_powers.csv")
+powers <- read_csv("https://raw.githubusercontent.com/mblstamps/stamps2023/main/day1/intro_R/super_data/super_hero_powers.csv")
 powers
 ```
 
@@ -42,7 +42,7 @@ powers
 ### Practice 1.
 Try out janitor on the supers_hero_powers data
 ```{r}
-superhero_info <- read_csv("super_data/heroes_information.csv")
+superhero_info <- read_csv("https://raw.githubusercontent.com/mblstamps/stamps2023/main/day1/intro_R/super_data/heroes_information.csv")
 # add code to clean names below!
 
 superhero_info <- clean_names(superhero_info)
