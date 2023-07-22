@@ -4,9 +4,9 @@ author: "Hannah Houts"
 output: html_document
 ---
 
- When are functions used in R?
+When are functions used in R?
  
- Quite literally all the time :) 
+Quite literally all the time :) 
  
 when we read a csv, we are using a function, `read_csv()` from the package `readr`.
 
@@ -40,6 +40,60 @@ calc_avg_height_by_align <- function(align){
 }
 
 calc_avg_height_by_align("good")
+calc_avg_height_by_align("bad")
+
 ```
+Challenge: make a function to calculate avg height by publisher
+
+```{r}
+calc_avg_height_by_pub <- function(align){
+  align_df <- heros[heros$Publisher == align, ]
+  count <- mean(align_df$Height, na.rm = T)
+  return(count)
+}
+calc_avg_height_by_pub("George Lucas")
+
 ```
+
+
+This is a functions to calculate the center log ratio of a vector of counts
+```{r}
+abundances <- read_tsv("data/FWS_OTUs.txt")
+
+clr <- function(counts) {    
+  log(counts) - mean(log(counts))
+}
+
+clr(c(5, 6, 7))
+clr(c(5, 6, 0, 7))
+```
+
+
+```{r}
+clr_better <- function(counts, psuedo = 0.5) {
+  counts[counts == 0] <- psuedo
+  log(counts) - mean(log(counts))
+}
+```
+
+
+```{r}
+clr_better(c(5, 6, 7))
+clr_better(c(5, 6, 0, 7))
+```
+
+
+```{r}
+abundances$LOP_Jan
+```
+
+
+```{r}
+clr_better(abundances$LOP_Jan)
+clr_better(abundances$LOP_Jan, psuedo = 0.1)
+
+```
+
+
+
 
