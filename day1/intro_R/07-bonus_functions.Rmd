@@ -4,7 +4,42 @@ author: "Hannah Houts"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+ When are functions used in R?
+ 
+ Quite literally all the time :) 
+ 
+when we read a csv, we are using a function, `read_csv()` from the package `readr`.
+
+we typically use 
+```
+library(readr)
+```
+to load a package, 
+
+but we can even load just one function from a package with this syntax:
+```{r}
+heros <- readr::read_csv("super_data/heroes_information.csv")
+heros
+```
+ 
+ 
+```{r}
+calc_count_by_eyecolor <- function(color){
+  count <- sum(heros$`Eye color`==color)
+  return(count)
+}
+
+calc_count_by_eyecolor("yellow")
+```
+
+```{r}
+calc_avg_height_by_align <- function(align){
+  align_df <- heros[heros$Alignment == align, ]
+  count <- mean(align_df$Height)
+  return(count)
+}
+
+calc_avg_height_by_align("good")
+```
 ```
 
