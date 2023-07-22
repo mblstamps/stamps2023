@@ -42,20 +42,15 @@ powers
 ### Practice 1.
 Try out janitor on the supers_hero_powers data
 ```{r}
-supers <- read_csv("super_data/heroes_information.csv")
-# add code to clean names below!
+superhero_info <- read_csv("super_data/heroes_information.csv")
+# add code to clean names below, and update (overwrite) the superhero_info object with the clean names
 
 ```
 
 
-```{r}
-superhero_powers
-```
 
 lets take that superpowers dataframe and make a plot!
 ```{r}
-tabyl(dat = superhero_info$skin_color)
-
 superhero_info %>% 
   arrange(desc(height))
 ```
@@ -130,18 +125,16 @@ edit the code below to make a barchart of your own, choosing your own:
 try choosing a different x aesthetic in particular
 
 (tip: for a barchart, usually y is numeric data. )
-```{r}
-tabyl(superhero_info$gender)
-
+```{r, eval=FALSE}
 superhero_info %>% 
-  filter(publisher == "Marvel Comics" & alignment == "neutral") %>%
-  ggplot(aes(x = gender, y = height)) +
+  filter(_____) %>%
+  ggplot(aes(x = ___, y = ___, fill = ___)) +
   geom_col()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))+ 
-  labs(title = "Heights of Super Heros", x = "Hero Name", y = "Height (cm)")
+  labs(title = "___", x = "___", y = "___")
 ```
 
-lets test out a scatter plot, by choosing a continuous variable for both the weights and height. note that the aesthetic for coloring the points is "color", not "fill"
+lets test out a scatter plot, by choosing a continuous variable for both the weights and height. note that the aesthetic for coloring the points is "color", not "fill", and the geom() layer is "point".
 
 ```{r}
 superhero_info %>% 
@@ -153,7 +146,7 @@ superhero_info %>%
 
 ## Applying to our microbial abundance data
 
-Lets test out some plotting with our microbial abundance data
+Lets test out some plotting with our microbial abundance data, first by generating a relative abundance column by running the code below
 ```{r}
 abundances <- read_tsv("data/FWS_OTUs.txt")
 
@@ -163,41 +156,72 @@ rel_abundances <- abundances %>%
     separate(name, c("where", "when"), remove = F) %>%
     group_by(where, when) %>%
     mutate(relative_abundance = value/sum(value))
+rel_abundances
 ```
 
-
+Here we can make a scatter plot, plotting the relative abundance of each species by sample. adding `aplha = .5` in the geom layer makes the points 50% translucent
 ```{r}
 rel_abundances %>% 
   ggplot(aes(x = name, 
              y = relative_abundance, 
              col = when)) + 
-  geom_point() +
+  geom_point(alpha=.5) +
   labs(x = "", y = "Relative\nabundance")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
 
 
 
-
+Lets test out a new plot. Here is code to make a relative abundances
 
 
 ```{r}
-library(tidyverse)
-otus <- read_tsv("data/FWS_OTUs.txt")
-otus %>%
-  rename("taxonomy" = 1) %>%
-  pivot_longer(-1) %>%
-  separate(name, c("where", "when"), remove = F) %>%
-  group_by(where, when) %>%
-  mutate(when = factor(when, 
-                       levels = c("Jan", "Feb", "May", "Jun", "Jul", "Aug"))) %>%
+rel_abundances <- rel_abundances %>% mutate(when = factor(when, 
+                       levels = c("Jan", "Feb", "May", "Jun", "Jul", "Aug"))) 
+rel_abundances
+```
+
+```{r}
+rel_abundances %>% 
   filter(taxonomy == "Bacteria;Proteobacteria;Betaproteobacteria;Burkholderiales;Burkholderiaceae;Ralstonia") %>% 
-  mutate(relative_abundance = value/sum(value)) %>%
   ggplot(aes(x = name, 
              y = relative_abundance, 
              col = when)) + 
-  geom_jitter(width = 0) +
-  ylab("Relative\nabundance") + 
-  xlab("") +
+  geom_point() +
+  labs(y = "Relative\nabundance")+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
+### Practice 3. 
+Here is code to pivot the data wide again. first run this
+```{r}
+rel_abundances_wide <- abundances %>%
+  rename("taxonomy" = 1) %>%
+  pivot_longer(-1) %>%
+  mutate(relative_abundance = value/sum(value)) %>%
+  filter(taxonomy %in% c("Bacteria;Cyanobacteria;Cyanobacteria;SubsectionIV;Unassigned;Anabaena", "Bacteria;Proteobacteria;Betaproteobacteria;Burkholderiales;Burkholderiaceae;Ralstonia"))%>% 
+  select(!value) %>%
+  pivot_wider(names_from = taxonomy, 
+              values_from = relative_abundance) %>%
+  rename("Cyanobacteria" = 2, 
+         "Proteobacteria" = 3)
+
+rel_abundances_wide
+```
+
+
+Now, try to make a scatter plot of the relative abundances of Amy's favorite 2 taxa, against each other.
+
+- add the x & y aesthetics to match the 2 columns in rel_abundances_wide that represent Amy's favorite taxa.
+- debug the geom layer
+- fill in the x & y labels, and add a title
+
+```{r, eval=F}
+rel_abundances_wide %>% 
+ggplot(aes(x = ____, y = ____, fill = ____)) + 
+  geom_spot() +
+  labs(x="___", y = "___")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
+
+
+
