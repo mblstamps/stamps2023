@@ -1,5 +1,8 @@
 # An Assembly Exercise / July 24 / STAMPS 2023
 
+[![hackmd-github-sync-badge](https://hackmd.io/EnOkdpyoRC6-7acmrsA5Nw/badge)](https://hackmd.io/EnOkdpyoRC6-7acmrsA5Nw)
+
+
 Working individually or in groups, please reconstruct the original text for the handouts I've given you. You may use the computer as you wish, but I suggest you avoid any attempts at programming...
 
 You have 30 minutes.
