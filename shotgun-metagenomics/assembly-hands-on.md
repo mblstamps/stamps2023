@@ -1,6 +1,11 @@
+
 [toc]
 
-@ctb reset smash/etc environment?
+<!-- @ctb reset smash/etc environment? -->
+
+# Assembly hands-on - STAMPS 2023 lecture
+
+[![hackmd-github-sync-badge](https://hackmd.io/ySOr7OgWQ7WP5HawYOPzqA/badge)](https://hackmd.io/ySOr7OgWQ7WP5HawYOPzqA)
 
 ## Introduction to data and software
 
@@ -10,15 +15,13 @@ We will use the [megahit](https://github.com/voutcn/megahit) de novo assembler t
 
 ## Connect to your remote computer via RStudio
 
-We'll need
+We'll need to use a remote computer to run the assembler. This is partly because the data is large, and partly because the software only works on Linux or Mac, and partly because it needs a lot of memory and compute and runs a lot faster on our 
 
 Find your remote computer via the [list of computers for students](https://hackmd.io/oz5sTY9KRCqdHHkM9iNJyg?view), and open the
 RStudio link. Log in to RStudio and then go
 to the `Terminal` prompt.
 
 (You can also ssh in to the remote computer or use JupyterLab.)
-
-
 
 ## Installing software
 
@@ -155,9 +158,9 @@ sourmash sketch dna GCA_000017985.1_ASM1798v1_genomic.fna.gz \
 
 Q: Why does it take so much longer to sketch the reads than the assembly or the reference?
 
-## Compare the k-mer signature:
+## Compare the k-mer signatures
 
-Let's do a Jaccard comparison; this is a pairwise distance metric that measures the ratio of the number of shared k-mers over the number of total k-mers in two sets. See formula [here](https://sourmash.readthedocs.io/en/latest/kmers-and-minhash.html#Calculating-Jaccard-similarity-and-containment.)
+Let's do a Jaccard comparison; this is a pairwise distance metric that measures the ratio of the number of shared k-mers over the number of total k-mers in two sets. See formula [here](https://sourmash.readthedocs.io/en/latest/kmers-and-minhash.html#Calculating-Jaccard-similarity-and-containment).
 
 This produces a similarity matrix:
 ```
@@ -191,7 +194,32 @@ and how many of the k-mers in the _reads_ are in the _reference_:
 sourmash search --containment reads.sig.gz ref.sig.gz --ignore-abundance
 ```
 
-CTB: Venn diagrams pls
+You can get both by using `sourmash sig overlap`:
+```
+sourmash sig overlap reads.sig.gz ref.sig.gz
+```
+and you should get:
+```
+similarity:                  0.28671
+first contained in second:   0.28684
+second contained in first:   0.99842
+
+number of hashes in first:   15406
+number of hashes in second:  4426
+
+number of hashes in common:  4419
+only in first:               10987
+only in second:              7
+total (union):               15413
+```
+
+And here's a venn diagram of the overlap between the assembly and the reads:
+
+![](https://hackmd.io/_uploads/H1rrEw2qh.png)
+
+and the overlap between the reference and the reads:
+
+![](https://hackmd.io/_uploads/r1AJ4P253.png)
 
 ## Looking at high abundance k-mers
 
@@ -211,6 +239,8 @@ sourmash plot high-abund --labels --vmin 0.85
 and take a look at the result:
 
 ![](https://hackmd.io/_uploads/SkVf1Ih5n.png)
+
+Now you can see that the high abundance k-mers are much more similar to the reference and assembly than all the reads were!
 
 ## Mapping reads vs k-mers
 
@@ -246,20 +276,3 @@ The key lessons are really the same as what was in our assembly exercise:
 * repetitive regions, highly strain variable regions, or low coverage regions are largely missed in short-read/Illumina assemblies.
 
 We'll talk a bit more about actual _metagenome_ assembly tomorrow.
-
-## Optional: run things in a Jupyter Notebook instead ;)
-
-CTB: make a Jupyter Notebook, give it to them to download/copy
-
-maybe venn diagrams in jup?
-
-tell people to go through the tutorial in the notebook?
-
-post notebook to github, and also quarto.
-
-## Optional: publish with Quarto :)
-
-CTB: quarto install, run & publish.
-
-
-
