@@ -153,7 +153,7 @@ Now, we'll run the [sourmash gather](https://sourmash.readthedocs.io/en/latest/c
 
 Run gather - this will take ~6 minutes:
 ```
-sourmash gather SRR8859675.sig.gz gtdb-rs214-reps.k31.zip --save-matches matches.zip
+sourmash gather SRR8859675.sig.gz reference/gtdb-rs214-reps.k31.zip --save-matches matches.zip
 ```
 Here we are saving the matching genome sketches to `matches.zip` so we can rerun the analysis if we like.
 
@@ -206,7 +206,7 @@ The `unweighted` percent is (approximately) the following:
 
 Interestingly, this is the _only_ number in this entire tutorial that is essentially impossible to estimate any way other than with k-mers.
 
-This number is also a big underestimate of the "true" number for the metagenome - we'll explain more later :)
+This number is also a big underestimate of the "true" number for the metagenome - we'll discuss more later :)
 :::
 
 ## Build a taxonomic profile of the metagenome
@@ -226,9 +226,6 @@ sourmash tax metagenome -g SRR8859675.x.gtdb.csv \
 ```
 this shows you the rank, taxonomic lineage, and weighted fraction of the metagenome at the 'order' rank.
 
-At the bottom, we have a script to plot the resulting taxonomy using [metacoder](https://grunwaldlab.github.io/metacoder_documentation/) - here's what it looks like:
-
-![metacoder output](https://raw.githubusercontent.com/mblstamps/stamps2022/main/kmers_and_sourmash/metacoder_gather.png)
 
 ## Interlude: why reference-based analyses are problematic for environmental metagenomes
 
@@ -292,10 +289,10 @@ Here we see a few interesting things -
 
 What's the remaining 50%? There are several answers -
 
-(1) most of the constitutent genomes aren't in the reference database;
+(1) most of the genomes actually the metagenome aren't in our reference database;
 (2) not everything in the metagenome is high enough coverage to bin into MAGs;
 (3) not everything in the metagenome is bacterial or archaeal, and we didn't do viral or eukaryotic binning;
-(4) some of what's in the metagenome k-mers may simply be erroneous (although with abundance weighting, this is likely to be a small chunk of things)
+(4) some of what's in the metagenome k-mers may simply be erroneous (although with abundance weighting, this is likely to be only a small chunk of things)
 
 ## Add taxonomic information from these MAGs.
 
@@ -309,7 +306,7 @@ do
     # get 'MAG' prefix. => NAME
     NAME=$(basename $i .fasta.sig)
     # search against GTDB
-    echo sourmash gather $i gtdb-rs214-reps.k31.zip \
+    echo sourmash gather $i reference/gtdb-rs214-reps.k31.zip \
         --threshold-bp=5000 \
         -o ${NAME}.x.gtdb.csv
 done | parallel
@@ -368,6 +365,51 @@ sourmash tax metagenome -g SRR8859675.x.gtdb+MAGS.csv \
     -F human -r order
 ```
 Now only 56.5% remains unclassified, which is much better than before!
+
+For the classified fraction, we can visualize the distribution of taxa using [sourmashconsumr](https://github.com/Arcadia-Science/sourmashconsumr/):
+
+![](https://hackmd.io/_uploads/ryx1O4T53.png)
+
+:::spoiler
+:::warning
+
+To build this plot, run the following in your terminal:
+```
+sourmash tax annotate -g SRR8859675.x.gtdb+MAGS.csv -t gtdb-rs214.taxonomy.sqldb MAGs.lineage.csv 
+```
+This adds a 'lineages' column to the gather results without doing any taxonomic summarization.
+
+**Then go into your R Console.**
+
+Install sourmashconsumr (warning, takes several minutes)
+```
+install.packages("remotes")
+remotes::install_github("Arcadia-Science/sourmashconsumr")
+```
+Load packages
+```
+library(sourmashconsumr)
+library(dplyr)
+library(ggplot2)
+library(RColorBrewer)
+```
+
+Load the data
+```
+gather_csv <- '~/kmers/SRR8859675.x.gtdb+MAGS.with-lineages.csv'
+inf = sourmashconsumr::read_taxonomy_annotate(gather_csv) %>%
+  dplyr::mutate(query_name = basename(query_filename))
+```
+
+plot
+```
+plot_taxonomy_annotate_sankey(taxonomy_annotate_df = inf, tax_glom_level = "order")
+```
+
+:::
+
+
+
 
 ## Summary of Taxonomic Profiling
 
@@ -451,6 +493,7 @@ A few points:
 * We would have gotten slightly different results using k=21 or k=51; more of the metagenome would have been classified with k=21, while the classification results would have been more closely specific to genomes with k=51;
 * sourmash is a nice multitool for doing this, but you could have gotten similar results with other methods.
 * Next steps here could include mapping reads to the genomes we found, and/or doing functional analysis on the matching genes and genomes.
+* You can do downstream analyses (e.g. diff abundance) with sourmash gather -> taxonomy results. Here's a tutorial for building a **phyloseq** object: [From raw metagenome reads to phyloseq taxonomy table using sourmash gather and sourmash taxonomy](https://taylorreiter.github.io/2022-07-28-From-raw-metagenome-reads-to-phyloseq-taxonomy-table-using-sourmash-gather-and-sourmash-taxonomy/).
 
 
 
