@@ -1,7 +1,6 @@
 # An Assembly Exercise NOTES / July 24 / STAMPS 2023
 
-[![hackmd-github-sync-badge](https://hackmd.io/EnOkdpyoRC6-7acmrsA5Nw/badge)](https://hackmd.io/EnOkdpyoRC6-7acmrsA5Nw)
-
+[![hackmd-github-sync-badge](https://hackmd.io/5VATp0dUTBuTiG1HYUzxRQ/badge)](https://hackmd.io/5VATp0dUTBuTiG1HYUzxRQ)
 
 Working individually or in groups, please reconstruct the original text for the handouts I've given you. You may use the computer as you wish, but I suggest you avoid any attempts at programming... and **DO NOT GOOGLE THE DATA PLEASE :).**
 
