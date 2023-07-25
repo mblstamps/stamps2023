@@ -6,6 +6,11 @@ rule all:
     input:
         sankey=expand("{sample}.x.gtdbMAGS.sankey.png", sample=SAMPLES),
 
+
+#####################################
+##############  SETUP  ##############
+#####################################
+
 # Rule to download the reference files
 rule download_and_prep_reference_files:
     output:
@@ -20,10 +25,6 @@ rule download_and_prep_reference_files:
         sourmash tax prepare -t {params.lineages_zip} \
                              -o {output.lineages} -F sql
         """
-
-#####################################
-##############  SETUP  ##############
-#####################################
 
 # Rule to download the metagenome files
 rule download_metagenome_files:
