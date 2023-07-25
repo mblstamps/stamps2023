@@ -1,4 +1,7 @@
-# Analyzing the genomic and taxonomic composition of an environmental metagenome using GTDB and sample-specific MAGs with sourmash
+# K-mer-based Taxonomic Profiling of an Environmental Metagenome
+
+[![hackmd-github-sync-badge](https://hackmd.io/0ErEGoopTHaSwyRVoDovdg/badge)](https://hackmd.io/0ErEGoopTHaSwyRVoDovdg)
+
 ---
 
 ## Setup
