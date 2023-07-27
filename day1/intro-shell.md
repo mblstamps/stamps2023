@@ -294,7 +294,7 @@ Let's try out several of the tools and strategies we use for file manipulation t
 Here, we'll download a file directly to our remote instance using the Terminal. This cuts out the intermediate step of downloading to our laptops.
 
 ```
-curl -JLO https://raw.githubusercontent.com/mblstamps/stamps2023/add-unix/intro-unix/season1.csv
+curl -JLO https://raw.githubusercontent.com/mblstamps/stamps2023/main/intro-unix/season1.csv
 ```
 > curl is a unix command to download files. We are using the following options
 > - -J Use the header-provided filename
@@ -344,7 +344,7 @@ less season1.csv
 ## Digging into the file
 You may have some burning questions you need answers for, like:
 
-### How many lines of dialogue were said in season 1 of south park???
+### How many lines of dialogue were said in season 1 of south park?
 
 The command `wc` ('word count') can be used to count lines.
 ```
@@ -378,7 +378,7 @@ Alternatively, we can use the `-c` option to have grep count the number of lines
 ```
 grep -c "genetic engineering" season1.csv
 ```
-> Use `grep --help`  or man grep` to see all `grep` options
+> Use `grep --help`  to see all `grep` options
 
 
 ### How many times did a character say 'Kenny'?
@@ -397,6 +397,14 @@ cut -f 4 -d ',' season1.csv | grep Kenny
 ```
 If we count with `grep -c`, we see that Kenny's name was said 26 times. If you just use `grep -c Kenny` on the whole file, you should get 136 lines, so Kenny himself had 110 lines of dialog!
 
+### Outputting to a file
+If you'd like to save your results to a file, you can  use the '>' character 
+```
+cut -f 4 -d ',' season1.csv | grep Kenny > someone_said_kenny.txt
+```
+> This creates a new file called `someone_said_kenny.txt`, which you can view with `cat`, `head`, `tail`, or `less`, as above.
+
+
 There are many more helpful unix tools which we won't touch on today. Mike Lee has a tutorial of [six glorious commands](https://astrobiomike.github.io/unix/six-glorious-commands), which starts with `cut` and `grep` and adds `paste`, `set`, `awk`, and `tr`.
 
 
@@ -408,7 +416,7 @@ For this analysis, let's download an R script that plots the number of times a c
 
 Download the script from this link:
 ```
-curl -JLO https://raw.githubusercontent.com/mblstamps/stamps2023/add-unix/intro-unix/plot-kenny.R
+curl -JLO https://raw.githubusercontent.com/mblstamps/stamps2023/main/intro-unix/plot-kenny.R
 ```
 
 This should download a file called `plot-kenny.R`. Use `ls` to verify that the file downloaded.
@@ -450,19 +458,9 @@ The `All-seasons.csv` is too large to view in the RStudioServer. This can often 
 
 :::spoiler
 ![](https://hackmd.io/_uploads/S1hv3xvc3.png)
-
-
-
 :::
 
 -----
-<!-- ## Potential things to add:
-
-- redirecting to a file
-    - `grep 'genetic engineering season1.csv > ge_lines.txt'` -->
-
-
-   
 
 ## Resources
 The materials in this lesson are adapted from the following resources:
