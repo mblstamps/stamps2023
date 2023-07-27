@@ -136,7 +136,7 @@ GCA_000008085.1,t,d__Archaea,p__Nanoarchaeota,c__Nanoarchaeia,o__Nanoarchaeales,
 ```
 Let's prepare the taxonomy database for faster access:
 ```
-sourmash tax prepare -t reference/gtdb-rs214.lineages.csv \
+sourmash tax prepare --taxonomy reference/gtdb-rs214.lineages.csv \
     -o gtdb-rs214.taxonomy.sqldb -F sql
 ```
 This creates a file `gtdb-rs214.taxonomy.sqldb` that contains all the information in the CSV file, but which is faster to load than the CSV file.
@@ -221,8 +221,9 @@ Let's re-run gather so we can save CSV output. This run will be much faster, bec
 sourmash gather SRR8859675.sig.gz matches.zip -o SRR8859675.x.gtdb.csv
 
 # use tax metagenome to classify the metagenome
-sourmash tax metagenome -g SRR8859675.x.gtdb.csv \
-    -t gtdb-rs214.taxonomy.sqldb -F human -r order
+sourmash tax metagenome --gather-csv SRR8859675.x.gtdb.csv \
+    --taxonomy gtdb-rs214.taxonomy.sqldb \
+    --output-format human --rank order
 ```
 this shows you the rank, taxonomic lineage, and weighted fraction of the metagenome at the 'order' rank.
 
@@ -319,8 +320,9 @@ If you scan the results quickly, you'll see that one MAG has matches in genus Pr
 
 Let's classify them "officially" using sourmash and an average nucleotide identity threshold of 0.8 -
 ```
-sourmash tax genome -g MAG*.x.gtdb.csv \
-    -t gtdb-rs214.taxonomy.sqldb -F human \
+sourmash tax genome --gather-csv MAG*.x.gtdb.csv \
+    --taxonomy gtdb-rs214.taxonomy.sqldb \ 
+    --output-format human \
     --ani 0.8
 ```
 This is an extremely liberal ANI threshold, incidentally; in reality you'd probably want to do something more stringent, as at least one of these is probably a new species.
@@ -337,8 +339,8 @@ The proportion here is the fraction of k-mers in the MAG that are annotated.
 
 Now let's turn this into a lineage spreadsheet:
 ```
-sourmash tax genome -g MAG*.x.gtdb.csv \
-    -t gtdb-rs214.taxonomy.sqldb -F lineage_csv \
+sourmash tax genome --gather-csv MAG*.x.gtdb.csv \
+    --taxonomy gtdb-rs214.taxonomy.sqldb --output-format lineage_csv \
     --ani 0.8 -o MAGs
 ```
 This will produce a file `MAGs.lineage.csv`; let's take a look:
@@ -360,9 +362,9 @@ g__Prosthecochloris,s__Prosthecochloris vibrioformis
 
 If we re-classify the metagenome using the combined "reference" of GTDB + MAGs, we see:
 ```
-sourmash tax metagenome -g SRR8859675.x.gtdb+MAGS.csv \
-    -t gtdb-rs214.taxonomy.sqldb MAGs.lineage.csv \
-    -F human -r order
+sourmash tax metagenome --gather-csv SRR8859675.x.gtdb+MAGS.csv \
+    --taxonomy gtdb-rs214.taxonomy.sqldb MAGs.lineage.csv \
+    --output-format human --rank order
 ```
 Now only 56.5% remains unclassified, which is much better than before!
 
@@ -375,7 +377,7 @@ For the classified fraction, we can visualize the distribution of taxa using [so
 
 To build this plot, run the following in your terminal:
 ```
-sourmash tax annotate -g SRR8859675.x.gtdb+MAGS.csv -t gtdb-rs214.taxonomy.sqldb MAGs.lineage.csv 
+sourmash tax annotate --gather-csv SRR8859675.x.gtdb+MAGS.csv --taxonomy gtdb-rs214.taxonomy.sqldb MAGs.lineage.csv 
 ```
 This adds a 'lineages' column to the gather results without doing any taxonomic summarization.
 
